@@ -20,8 +20,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
+      # base_path is "/<repository>" for a project site and empty for a user site or custom domain.
+      - id: pages
+        uses: actions/configure-pages@v5
       - run: bun install --frozen-lockfile
       - run: bun run build
+        env:
+          SITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
       - run: cp .output/public/index.html .output/public/404.html
       - run: touch .output/public/.nojekyll
       - uses: actions/upload-pages-artifact@v3
