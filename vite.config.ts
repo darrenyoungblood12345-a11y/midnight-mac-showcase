@@ -9,7 +9,17 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+import { normalizeBasePath } from "./src/lib/base-path";
+
+// Where the site is served from. GitHub Pages serves a project site from /<repository>/ and a
+// user site or custom domain from /; the Pages workflow passes whichever applies in
+// SITE_BASE_PATH. TanStack Start derives the router basepath from Vite's base, so asset URLs,
+// routes, links and prerendered pages all follow this one value. The paths in `pages` below
+// stay relative to it.
+const base = normalizeBasePath(process.env["SITE_BASE_PATH"]);
+
 export default defineConfig({
+  vite: { base },
   // Pin the server bundle so GitHub Actions does not auto-detect another host.
   // Prerendered HTML in .output/public is what GitHub Pages publishes.
   nitro: { preset: "cloudflare-module" },
